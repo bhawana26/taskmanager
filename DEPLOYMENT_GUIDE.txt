@@ -1,0 +1,141 @@
+====================================================
+  RAILWAY DEPLOYMENT GUIDE - STEP BY STEP
+====================================================
+
+TOTAL TIME: ~30-45 minutes
+
+----------------------------------------------------
+STEP 1: PUSH CODE TO GITHUB
+----------------------------------------------------
+
+1. Go to https://github.com and create a NEW repository
+   Name it: taskmanager (make it Public)
+
+2. Open terminal/command prompt in your taskmanager folder:
+
+   cd taskmanager
+   git init
+   git add .
+   git commit -m "Initial commit - TaskFlow app"
+   git branch -M main
+   git remote add origin https://github.com/YOUR_USERNAME/taskmanager.git
+   git push -u origin main
+
+----------------------------------------------------
+STEP 2: CREATE RAILWAY ACCOUNT & PROJECT
+----------------------------------------------------
+
+1. Go to https://railway.app
+2. Click "Login" → Sign in with GitHub
+3. Click "New Project"
+4. Choose "Empty Project"
+
+----------------------------------------------------
+STEP 3: ADD POSTGRESQL DATABASE
+----------------------------------------------------
+
+1. Inside your Railway project, click "+ Add Service"
+2. Choose "Database" → "PostgreSQL"
+3. Wait for it to deploy (30 seconds)
+4. Click on the PostgreSQL service
+5. Go to "Variables" tab
+6. Copy these values (you'll need them):
+   - PGHOST
+   - PGPORT
+   - PGDATABASE
+   - PGUSER
+   - PGPASSWORD
+
+----------------------------------------------------
+STEP 4: DEPLOY BACKEND (Spring Boot)
+----------------------------------------------------
+
+1. Click "+ Add Service" → "GitHub Repo"
+2. Select your repository
+3. Railway will detect it. Set Root Directory to: backend
+4. Click "Deploy"
+
+5. After deploying, go to "Variables" tab and add:
+
+   DATABASE_URL = jdbc:postgresql://PGHOST:PGPORT/PGDATABASE
+   (replace PGHOST, PGPORT, PGDATABASE with values from Step 3)
+
+   DB_USERNAME = (paste PGUSER value from Step 3)
+   DB_PASSWORD = (paste PGPASSWORD value from Step 3)
+   JWT_SECRET = MyTaskFlowSuperSecretKey2024XYZ123456
+   FRONTEND_URL = https://your-frontend.up.railway.app
+   (you'll update FRONTEND_URL after frontend is deployed)
+
+6. Go to "Settings" tab → "Networking" → "Generate Domain"
+7. Copy your backend URL (e.g., https://taskmanager-backend.up.railway.app)
+
+----------------------------------------------------
+STEP 5: DEPLOY FRONTEND (React)
+----------------------------------------------------
+
+1. Click "+ Add Service" → "GitHub Repo"
+2. Select the same repository
+3. Set Root Directory to: frontend
+4. Before deploying, go to "Variables" tab and add:
+
+   REACT_APP_API_URL = https://your-backend.up.railway.app
+   (use the URL you copied in Step 4)
+
+5. Click "Deploy"
+6. Go to "Settings" → "Networking" → "Generate Domain"
+7. Copy your frontend URL
+
+----------------------------------------------------
+STEP 6: UPDATE CORS SETTING
+----------------------------------------------------
+
+1. Go back to your backend service
+2. Update the FRONTEND_URL variable with your actual frontend URL
+3. Redeploy backend (it auto-redeploys when vars change)
+
+----------------------------------------------------
+STEP 7: TEST YOUR LIVE APP
+----------------------------------------------------
+
+1. Open your frontend URL in browser
+2. Click "Create one" to sign up
+3. Choose "Admin" role
+4. Create a project, add tasks — everything should work!
+
+----------------------------------------------------
+TROUBLESHOOTING
+----------------------------------------------------
+
+Problem: Backend fails to start
+→ Check DATABASE_URL format:
+  jdbc:postgresql://HOST:PORT/DATABASE_NAME
+
+Problem: Frontend shows blank page
+→ Check REACT_APP_API_URL has no trailing slash
+→ Make sure it starts with https://
+
+Problem: Login gives 401
+→ Make sure JWT_SECRET is at least 32 characters
+
+Problem: CORS error in browser
+→ Make sure FRONTEND_URL in backend matches your exact frontend URL
+
+----------------------------------------------------
+WHAT TO SUBMIT
+----------------------------------------------------
+
+After deployment:
+✅ Live Application URL: https://your-frontend.up.railway.app
+✅ GitHub Repository:    https://github.com/YOUR_USERNAME/taskmanager
+✅ README file:          README.txt (already created)
+✅ Demo Video:           Record 2-5 min showing:
+   - Signup as Admin
+   - Create a project
+   - Add a member
+   - Create and assign tasks
+   - Change task status
+   - Show dashboard stats
+   - Login as Member (different account)
+   - Show member-only view
+
+====================================================
